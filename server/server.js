@@ -1,35 +1,6 @@
-const mongoose = require("mongoose");
-
-mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost:27017/TodoApp");
-
-var Todo = mongoose.model("Todo", {
-  text: {
-    type: String,
-    trim: true,
-    minlength: 1,
-    required: true
-  },
-  completed: {
-    type: Boolean,
-    default: false
-  },
-  completedAt: {
-    type: Number
-  }
-});
-
-
-var User = mongoose.model("User", {
-  email: {
-    type: String,
-    trim: true,
-    minlength: 5,
-    required: true
-  }
-});
-
-
+var {mangoose} = require("./db/mongoose");
+var {User} = require("./models/user");
+var {Todo} = require("./models/todo");
 
 function saveObj(o) {
   o.save().then(res => {
