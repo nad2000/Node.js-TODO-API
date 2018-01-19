@@ -14,30 +14,21 @@ function saveObj(o) {
   });
 }
 
-var u = new User({
-  email: "test@test.edu"
+
+var app = express();
+app.use(bodyParser.json());
+app.post("/todos", (req, res) => {
+  console.log(req.body);
+  var todo = new Todo({
+    text: req.body.text
+  });
+  todo.save().then(doc => {
+    res.send(doc);
+  }, e => {
+    res.status(400).send(e);
+  });
 });
 
-saveObj(u);
-
-// var td = new Todo({
-//   text: "Cook dinner"
-// });
-
-// saveObj(td);
-// saveObj(
-//   new Todo({
-//     text: "Feed the cat",
-//     completed: true,
-//     completedAt: 123456
-//   })
-// );
-
-// saveObj(
-//   new Todo({
-//     text: "       ",
-//     completed: true,
-//     completedAt: 123456
-//   })
-// );
-
+app.listen(3333, () => {
+  console.log("Started on port 3333");
+})
