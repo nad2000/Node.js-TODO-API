@@ -1,4 +1,4 @@
-cosnt mangoose = require("mongoose");
+const mongoose = require("mongoose");
 
 var User = mongoose.model("User", {
   email: {

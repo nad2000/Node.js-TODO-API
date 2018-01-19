@@ -1,4 +1,4 @@
-cosnt mangoose = require("mongoose");
+const mongoose = require("mongoose");
 
 var Todo = mongoose.model("Todo", {
   text: {
