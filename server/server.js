@@ -32,3 +32,5 @@ app.post("/todos", (req, res) => {
 app.listen(3333, () => {
   console.log("Started on port 3333");
 })
+
+module.exports = {app};
