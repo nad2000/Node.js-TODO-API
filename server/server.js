@@ -6,6 +6,8 @@ var {mangoose} = require("./db/mongoose");
 var {User} = require("./models/user");
 var {Todo} = require("./models/todo");
 
+const port = process.env.PORT || 3333;
+
 function saveObj(o) {
   o.save().then(res => {
     console.log(`Saved obj:`);
@@ -64,8 +66,8 @@ app.get("/todos/:id", (req, res) => {
   )
 });
 
-app.listen(3333, () => {
-  console.log("Started on port 3333");
+app.listen(port, () => {
+  console.log(`Started on port ${port}`);
 })
 
 module.exports = {
