@@ -1,5 +1,6 @@
 const express = require("express")
 const bodyParser = require("body-parser");
+const {ObjectID} = require("mongodb");
 
 var {mangoose} = require("./db/mongoose");
 var {User} = require("./models/user");
@@ -13,7 +14,6 @@ function saveObj(o) {
     console.log(`Unable to save obj: ${e}`);
   });
 }
-
 
 var app = express();
 app.use(bodyParser.json());
@@ -31,13 +31,44 @@ app.post("/todos", (req, res) => {
 
 app.get("/todos", (req, res) => {
   Todo.find().then(
-    todos => res.send({todos}),
-    error => res.status(200).send({error})
+    todos => res.send({
+      todos
+    }),
+    error => res.status(200).send({
+      error
+    })
   );
+});
+
+app.get("/todos/:id", (req, res) => {
+  var id = req.params.id;
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send({
+      error: `Invalid ID ${id}`
+    });
+  }
+  Todo.findById(id).then(
+    todo => {
+      if (!todo) {
+        return res.status(404).send({
+          error: `TODO with ID ${id} not found`
+        });
+      }
+      res.send({
+        todo
+      });
+    },
+    error => res.status(400).send({
+      error
+    })
+  )
 });
 
 app.listen(3333, () => {
   console.log("Started on port 3333");
 })
 
-module.exports = {app};
+module.exports = {
+  app
+};
+
