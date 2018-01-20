@@ -97,17 +97,24 @@ describe("GET /todo/:id", () => {
       .expect(200)
       .expect(res => {
         expect(res.body.todo.text).toBe(todo.text);
-        expect(res.body.todo._id).toBe(todo._id.toString());
+        expect(res.body.todo._id).toBe(todo._id.toHexString());
       })
       .end(done);
   });
 
   it("should return 404 if id doesn't exist", (done) => {
-      //.end(done);
+    var hexId = new ObjectID().toHexString();
+    request(app)
+      .get(`/todos/${hexId}`)
+      .expect(404)
+      .end(done);
   });
 
   it("should return 404 for non-ObjectIDs", (done) => {
-      //.end(done);
+    request(app)
+      .get("/todos/INVALID_TODO_ID")
+      .expect(404)
+      .end(done);
   });
 });
 
