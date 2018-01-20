@@ -17,3 +17,9 @@ Todo.findOne({
 }).then(todo => console.log("FIND ONE:", todo));
 
 Todo.findById(id).then(todo => console.log("FIND BY ID:", todo));
+
+
+var invalidId = "5a62fd31d080dd0252245493111111";
+
+Todo.findById(invalidId).then(todo => console.log("FIND BY ID:", todo))
+  .catch(e => console.log(e));
