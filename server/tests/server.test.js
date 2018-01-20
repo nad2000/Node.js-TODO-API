@@ -13,6 +13,7 @@ beforeEach((done) => {
 });
 
 describe("POST /todo", () => {
+
   it("shoud create a new todo", (done) => {
     var text = "TEST TODO TEXT";
     request(app)
