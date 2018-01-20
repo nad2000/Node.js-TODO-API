@@ -23,3 +23,17 @@ var invalidId = "5a62fd31d080dd0252245493111111";
 
 Todo.findById(invalidId).then(todo => console.log("FIND BY ID:", todo))
   .catch(e => console.log(e));
+
+const {ObjectID} = require("mongodb");
+if (!ObjectID.isValid(invalidId)) {
+  console.log(`ERROR: the id ${invalidId} is not valid.`);
+}
+
+var userID = "5a61a5445a9d237224288ac9";
+User.findById(userID).then(user => {
+  if (!user) {
+    return console.log(`ID ${userID} not found`);
+  }
+  console.log(JSON.stringify(user, undefined, 2));
+},
+  e => console.log(e));
