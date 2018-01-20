@@ -1,5 +1,6 @@
 const expect = require("expect")
 const request = require("supertest");
+const {ObjectID} = require("mongodb");
 
 const {
   app
@@ -9,8 +10,10 @@ const {
 } = require("../models/todo");
 
 const todos = [{
+  _id: ObjectID(),
   text: "First test todo"
 }, {
+  _id: ObjectID(),
   text: "Second test todo"
 }];
 
@@ -88,15 +91,23 @@ describe("GET /todo", () => {
 describe("GET /todo/:id", () => {
 
   it("should return a TODO", (done) => {
-    Todo.findOne().then(todo => {
-      request(app)
-        .get(`/todos/${todo.id}`)
-        .expect(200)
-        .expect(res => {
-          expect(res.body.todo.text).toBe(todo.text);
-        })
-        .end(done);
-    });
+    var todo = todos[1];
+    request(app)
+      .get(`/todos/${todo._id}`)
+      .expect(200)
+      .expect(res => {
+        expect(res.body.todo.text).toBe(todo.text);
+        expect(res.body.todo._id).toBe(todo._id.toString());
+      })
+      .end(done);
+  });
+
+  it("should return 404 if id doesn't exist", (done) => {
+      //.end(done);
+  });
+
+  it("should return 404 for non-ObjectIDs", (done) => {
+      //.end(done);
   });
 });
 
