@@ -30,7 +30,6 @@ app.post("/todos", (req, res) => {
 });
 
 app.get("/todos", (req, res) => {
-  console.log(req.body);
   Todo.find().then(
     todos => res.send({todos}),
     error => res.status(200).send({error})
