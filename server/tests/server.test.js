@@ -49,7 +49,7 @@ describe("POST /todo", () => {
   });
 
 
-  it("shoud not create a new todo with an invalid body", (done) => {
+  it("should not create a new todo with an invalid body", (done) => {
     request(app)
       .post("/todos")
       .send({
@@ -73,7 +73,7 @@ describe("POST /todo", () => {
 
 describe("GET /todo", () => {
 
-  it("shoud get all TODOs", (done) => {
+  it("should get all TODOs", (done) => {
     request(app)
       .get("/todos")
       .expect(200)
@@ -81,6 +81,22 @@ describe("GET /todo", () => {
         expect(res.body.todos.length).toBe(2);
       })
       .end(done);
+  });
+});
+
+
+describe("GET /todo/:id", () => {
+
+  it("should return a TODO", (done) => {
+    Todo.findOne().then(todo => {
+      request(app)
+        .get(`/todos/${todo.id}`)
+        .expect(200)
+        .expect(res => {
+          expect(res.body.todo.text).toBe(todo.text);
+        })
+        .end(done);
+    });
   });
 });
 
