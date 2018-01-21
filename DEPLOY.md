@@ -1,5 +1,6 @@
 ```bash
 
+node --version # set this verions in package.json for node engine.
 heroku create
 # heroku addons:create mongolab:sandbox
 # create manually a free account for DB:
