@@ -2,13 +2,8 @@ const expect = require("expect")
 const request = require("supertest");
 const {ObjectID} = require("mongodb");
 
-
-const {
-  app
-} = require("../server");
-const {
-  Todo
-} = require("../models/todo");
+const {app} = require("../server");
+const {Todo} = require("../models/todo");
 
 const todos = [{
   _id: ObjectID(),
@@ -114,6 +109,45 @@ describe("GET /todo/:id", () => {
   it("should return 404 for non-ObjectIDs", (done) => {
     request(app)
       .get("/todos/INVALID_TODO_ID")
+      .expect(404)
+      .end(done);
+  });
+
+});
+
+describe("DELETE /todo/:id", () => {
+
+  it("should remove a TODO", (done) => {
+    var todo = todos[1];
+    request(app)
+      .delete(`/todos/${todo._id}`)
+      .expect(200)
+      .expect(res => {
+        expect(res.body.todo.text).toBe(todo.text);
+        expect(res.body.todo._id).toBe(todo._id.toHexString());
+      })
+      .end((err, res) => {
+        if(err) {
+          return done(err);
+        }
+        Todo.findById(todo._id).then(todo => {
+          expect(todo).toNotExist();
+          done();
+        }).catch(e => done(d));
+      });
+  });
+
+  it("should return 404 if id doesn't exist", (done) => {
+    var hexId = new ObjectID().toHexString();
+    request(app)
+      .delete(`/todos/${hexId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it("should return 404 for non-ObjectIDs", (done) => {
+    request(app)
+      .delete("/todos/INVALID_TODO_ID")
       .expect(404)
       .end(done);
   });

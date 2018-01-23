@@ -31,9 +31,10 @@ if (!ObjectID.isValid(invalidId)) {
 
 var userID = "5a61a5445a9d237224288ac9";
 User.findById(userID).then(user => {
-  if (!user) {
-    return console.log(`ID ${userID} not found`);
-  }
-  console.log(JSON.stringify(user, undefined, 2));
-},
-  e => console.log(e));
+    if (!user) {
+      return console.log(`ID ${userID} not found`);
+    }
+    console.log(JSON.stringify(user, undefined, 2));
+  },
+  e => console.error(e));
+

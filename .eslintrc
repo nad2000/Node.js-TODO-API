@@ -8,5 +8,15 @@
     "browser": true,
     "es6": true,
     "mocha": true
+  },
+  "rules": {
+    "comma-dangle": "warn",
+    "no-console": "allow",
+    "no-unused-vars": [
+      "error", {
+        "vars": "local",
+        "args": "none"
+      }
+    ]
   }
 }
