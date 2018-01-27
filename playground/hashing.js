@@ -1,4 +1,5 @@
 const {SHA256} = require("crypto-js");
+const jwt = require("jsonwebtoken");
 
 var message = "I am user number 3";
 var hash = SHA256(message).toString();
@@ -23,3 +24,10 @@ if (resultHash == token.hash) {
 } else {
   console.log("Data was changed. Do not trust!");
 }
+
+
+///////////////////////////////////
+
+var token = jwt.sign(data, "123abc");
+console.log(token.toString());
+
