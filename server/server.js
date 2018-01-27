@@ -128,12 +128,13 @@ app.post("/users", (req, res) => {
 
   var body = _.pick(req.body, ["email", "password", ]);
   var user = new User(body);
-  user.save().then(doc => {
-    res.send(doc);
-  }, e => {
-    res.status(400).send(e);
-  });
+
+  user.save().then(user => user.generateAuthToken()).then(
+      token => res.header("X-Auth", token)
+      .send(user))
+    .catch(e => res.status(400).send({error: e}));
 });
+
 
 
 app.listen(port, () => {
