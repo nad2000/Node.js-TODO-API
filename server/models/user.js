@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
@@ -31,6 +32,11 @@ var UserSchema = new mongoose.Schema({
     }
   }]
 })
+
+// override the serialization of User
+UserSchema.methods.toJSON = function() {
+  return _.pick(this.toObject(), ["_id", "email", ]);
+};
 
 // define instance methods:
 UserSchema.methods.generateAuthToken = function() {
