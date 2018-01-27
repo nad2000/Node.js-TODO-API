@@ -31,3 +31,7 @@ if (resultHash == token.hash) {
 var token = jwt.sign(data, "123abc");
 console.log(token.toString());
 
+
+var decoded = jwt.verify(token, "123abc");
+console.log("DECODED:", decoded);
+
