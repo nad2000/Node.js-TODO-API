@@ -5,76 +5,59 @@ const {ObjectID} = require("mongodb");
 const {app} = require("../server");
 const {Todo} = require("../models/todo");
 const {User} = require("../models/user");
+const {populateTodos, todos} = require("./seed");
 
-const todos = [{
-  _id: ObjectID(),
-  text: "First test todo"
-}, {
-  _id: ObjectID(),
-  text: "Second test todo",
-  completed: true,
-  completedAt: 42
+beforeEach(populateTodos);
 
-}];
+// describe("POST /user", () => {
 
-beforeEach((done) => {
-  Todo.remove({}).then(() => {
-    // insert some seed test data
-    Todo.insertMany(todos);
-  }).then(() => {
-    User.remove({});
-  }).then(() => done());
-});
-
-describe("POST /user", () => {
-
-  it("shoud create a new user", (done) => {
-    var text = "TEST user TEXT";
-    request(app)
-      .post("/users")
-      .send({
-        text
-      })
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.text).toBe(text);
-      })
-      .end((err, res) => {
-        if (err) {
-          return done(err);
-        }
-        user.find({
-          text
-        }).then(users => {
-          expect(users.length).toBe(1);
-          expect(users[0].text).toBe(text);
-          done();
-        }).catch(e => done(e));
-      });
-  });
+//   it("shoud create a new user", (done) => {
+//     var text = "TEST user TEXT";
+//     request(app)
+//       .post("/users")
+//       .send({
+//         text
+//       })
+//       .expect(200)
+//       .expect((res) => {
+//         expect(res.body.text).toBe(text);
+//       })
+//       .end((err, res) => {
+//         if (err) {
+//           return done(err);
+//         }
+//         user.find({
+//           text
+//         }).then(users => {
+//           expect(users.length).toBe(1);
+//           expect(users[0].text).toBe(text);
+//           done();
+//         }).catch(e => done(e));
+//       });
+//   });
 
 
-  it("should not create a new user with an invalid body", (done) => {
-    request(app)
-      .post("/users")
-      .send({
-        text: ''
-      })
-      .expect(400)
-      .expect((res) => {
-        expect(res.body.name).toBe("ValidationError");
-      })
-      .end((err, res) => {
-        if (err) {
-          return done(err);
-        }
-        user.find().then(users => {
-          expect(users.length).toBe(2);
-          done();
-        }).catch(e => done(e));
-      });
-  });
-});
+//   it("should not create a new user with an invalid body", (done) => {
+//     request(app)
+//       .post("/users")
+//       .send({
+//         text: ''
+//       })
+//       .expect(400)
+//       .expect((res) => {
+//         expect(res.body.name).toBe("ValidationError");
+//       })
+//       .end((err, res) => {
+//         if (err) {
+//           return done(err);
+//         }
+//         user.find().then(users => {
+//           expect(users.length).toBe(2);
+//           done();
+//         }).catch(e => done(e));
+//       });
+//   });
+// });
 
 describe("POST /todo", () => {
 
