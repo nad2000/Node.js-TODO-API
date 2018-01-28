@@ -7,6 +7,7 @@ const {ObjectID} = require("mongodb");
 const {mangoose} = require("./db/mongoose");
 const {User} = require("./models/user");
 const {Todo} = require("./models/todo");
+const {authenticate} = require("./middleware/authenticate");
 
 const port = process.env.PORT || 3333;
 
@@ -123,19 +124,6 @@ app.patch("/todos/:id", (req, res) => {
   }));
 });
 
-
-// middle-ware authentication function:
-var authenticate = (req, res, next) => {
-  var token = req.header("X-Auth");
-
-  User.findByToken(token).then(user => {
-    if (!user) return Promise.reject();
-    // res.send(user);
-    req.user = user;
-    req.token = token;
-    next();
-  }).catch(error => res.status(401).send());
-};
 
 app.get("/users/me", authenticate, (req, res) => res.send(req.user));
 
