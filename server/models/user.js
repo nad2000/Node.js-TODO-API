@@ -48,7 +48,7 @@ UserSchema.statics.findByToken = function(token) {
     });
   } catch (e) {
     return Promise.reject();
-  }
+  };
 }
 // define instance methods:
 UserSchema.methods.generateAuthToken = function() {
