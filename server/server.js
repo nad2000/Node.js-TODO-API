@@ -123,6 +123,17 @@ app.patch("/todos/:id", (req, res) => {
   }));
 });
 
+
+app.get("/users/me", (req, res) => {
+  var token = req.header("X-Auth");
+
+  User.findByToken(token).then(user => {
+    if (!user) {}
+    res.send(user);
+  }).catch(error => res.status(401).send());
+});
+
+
 // POST /users
 app.post("/users", (req, res) => {
 

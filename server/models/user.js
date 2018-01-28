@@ -38,6 +38,20 @@ UserSchema.methods.toJSON = function() {
   return _.pick(this.toObject(), ["_id", "email", ]);
 };
 
+UserSchema.statics.findByToken = function(token) {
+  try {
+    var decoded = jwt.verify(token, "abc123");
+    return User.findOne({
+      _id: decoded._id,
+      "tokens.token": token,
+      "tokens.access": "auth"
+    });
+  } catch (e) {
+    return new Promise((resolve, reject) => {
+      reject();
+    });
+  }
+}
 // define instance methods:
 UserSchema.methods.generateAuthToken = function() {
   var access = "auth";
