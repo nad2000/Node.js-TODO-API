@@ -124,15 +124,20 @@ app.patch("/todos/:id", (req, res) => {
 });
 
 
-app.get("/users/me", (req, res) => {
+// middle-ware authentication function:
+var authenticate = (req, res, next) => {
   var token = req.header("X-Auth");
 
   User.findByToken(token).then(user => {
     if (!user) return Promise.reject();
-    res.send(user);
+    // res.send(user);
+    req.user = user;
+    req.token = token;
+    next();
   }).catch(error => res.status(401).send());
-});
+};
 
+app.get("/users/me", authenticate, (req, res) => res.send(req.user));
 
 // POST /users
 app.post("/users", (req, res) => {
