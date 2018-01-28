@@ -47,9 +47,7 @@ UserSchema.statics.findByToken = function(token) {
       "tokens.access": "auth"
     });
   } catch (e) {
-    return new Promise((resolve, reject) => {
-      reject();
-    });
+    return Promise.reject();
   }
 }
 // define instance methods:
