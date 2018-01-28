@@ -2,6 +2,7 @@ const _ = require("lodash");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 // need to user schema to defie new methods
 var UserSchema = new mongoose.Schema({
@@ -31,7 +32,22 @@ var UserSchema = new mongoose.Schema({
       required: true
     }
   }]
-})
+});
+
+// Use mongoose middleware:
+UserSchema.pre("save", function (next) { // user regural function to access 'this'
+  if (this.isModified("password"))
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(this.password, salt, (err, hash) => {
+        this.password = hash;
+        next();
+      });
+    });
+  else {
+    next();
+  }
+});
+
 
 // override the serialization of User
 UserSchema.methods.toJSON = function() {
