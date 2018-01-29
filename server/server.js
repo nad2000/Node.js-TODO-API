@@ -144,8 +144,12 @@ app.post("/users/login", (req, res) => {
 
   var {email, password} = _.pick(req.body, ["email", "password", ]);
 
-  User.findByCredentials(email, password).then(user => res.send(user))
-    .catch(e => res.status(400).send({
+  User.findByCredentials(email, password).then(user => {
+    return user.generateAuthToken().then(token => {
+      res.header("X-Auth", token).send(user);
+    });
+  })
+    .catch(e => res.status(401).send({
       error: e
     }));
 });

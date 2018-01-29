@@ -313,7 +313,7 @@ describe("POST /users", () => {
           expect(user).toExist();
           expect(user.password).toNotBe(password);
           done();
-        });
+        }).catch(e => done(e));
       });
   });
 
@@ -345,4 +345,49 @@ describe("POST /users", () => {
   });
 
 });
+
+describe("POST /users/login", () => {
+
+  it("shoud login a user", done => {
+    var {
+      email,
+      password,
+      _id
+    } = users[1];
+    request(app)
+      .post("/users/login")
+      .send({email, password})
+      .expect(200)
+      .expect(res => {
+        //console.log(JSON.stringify(res.body, undefined, 2));
+        expect(res.headers["x-auth"]).toExist();
+        expect(res.body._id).toExist();
+        expect(res.body.email).toBe(email);
+      }).end((err, res) => {
+        if (err) return done(err);
+        var token = res.headers["x-auth"];
+        User.findById(_id).then(user => {
+          expect(user.tokens[0]).toInclude({
+            access: "auth",
+            token: res.headers["x-auth"]
+          });
+          done();
+        }).catch(e => done(e));
+      });
+  });
+
+  it("should reject invalid login", done => {
+    var {email} = users[0];
+    var password = "INCORRECT";
+    request(app)
+      .post("/users/login")
+      .send({email, password})
+      .expect(401)
+      .expect(res => {
+        expect(res.headers["x-auth"]).toNotExist();
+      }).end(done);
+  });
+
+});
+
 
