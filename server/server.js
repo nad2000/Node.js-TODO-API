@@ -139,6 +139,16 @@ app.post("/users", (req, res) => {
     .catch(e => res.status(400).send({error: e}));
 });
 
+// POST /users
+app.post("/users/login", (req, res) => {
+
+  var {email, password} = _.pick(req.body, ["email", "password", ]);
+
+  User.findByCredentials(email, password).then(user => res.send(user))
+    .catch(e => res.status(400).send({
+      error: e
+    }));
+});
 
 
 app.listen(port, () => {
