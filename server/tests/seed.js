@@ -4,24 +4,6 @@ const {User} = require("../models/user");
 const jwt = require("jsonwebtoken");
 
 
-const todos = [{
-  _id: new ObjectID(),
-  text: "First test todo"
-}, {
-  _id: new ObjectID(),
-  text: "Second test todo",
-  completed: true,
-  completedAt: 42
-
-}];
-
-const populateTodos = done => {
-  Todo.remove({}).then(() => {
-    // insert some seed test data
-    Todo.insertMany(todos);
-  }).then(() => done());
-};
-
 const users = [{
   _id: new ObjectID(),
   email: "test123@test.com",
@@ -45,6 +27,26 @@ const users = [{
 const populateUsers = done => {
   User.remove({}).then(() => {
     return Promise.all(users.map(u => new User(u).save()));
+  }).then(() => done());
+};
+
+const todos = [{
+  _id: new ObjectID(),
+  text: "First test todo",
+  _creator: users[0]._id
+}, {
+  _id: new ObjectID(),
+  text: "Second test todo",
+  completed: true,
+  completedAt: 42,
+  _creator: users[1]._id
+
+}];
+
+const populateTodos = done => {
+  Todo.remove({}).then(() => {
+    // insert some seed test data
+    Todo.insertMany(todos);
   }).then(() => done());
 };
 

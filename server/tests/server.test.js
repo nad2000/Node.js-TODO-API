@@ -17,6 +17,7 @@ describe("POST /todo", () => {
     var text = "TEST TODO TEXT";
     request(app)
       .post("/todos")
+      .set("X-Auth", users[0].tokens[0].token)
       .send({
         text
       })
@@ -42,6 +43,7 @@ describe("POST /todo", () => {
   it("should not create a new todo with an invalid body", (done) => {
     request(app)
       .post("/todos")
+      .set("X-Auth", users[0].tokens[0].token)
       .send({
         text: ''
       })
@@ -61,77 +63,16 @@ describe("POST /todo", () => {
   });
 });
 
-describe("GET /todo", () => {
+
+describe("GET /todos", () => {
 
   it("should get all TODOs", (done) => {
     request(app)
       .get("/todos")
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(200)
       .expect(res => {
-        expect(res.body.todos.length).toBe(2);
-      })
-      .end(done);
-  });
-});
-
-describe("POST /todo", () => {
-
-  it("shoud create a new todo", (done) => {
-    var text = "TEST TODO TEXT";
-    request(app)
-      .post("/todos")
-      .send({
-        text
-      })
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.text).toBe(text);
-      })
-      .end((err, res) => {
-        if (err) {
-          return done(err);
-        }
-        Todo.find({
-          text
-        }).then(todos => {
-          expect(todos.length).toBe(1);
-          expect(todos[0].text).toBe(text);
-          done();
-        }).catch(e => done(e));
-      });
-  });
-
-
-  it("should not create a new todo with an invalid body", (done) => {
-    request(app)
-      .post("/todos")
-      .send({
-        text: ''
-      })
-      .expect(400)
-      .expect((res) => {
-        expect(res.body.name).toBe("ValidationError");
-      })
-      .end((err, res) => {
-        if (err) {
-          return done(err);
-        }
-        Todo.find().then(todos => {
-          expect(todos.length).toBe(2);
-          done();
-        }).catch(e => done(e));
-      });
-  });
-});
-
-describe("GET /todo", () => {
-
-  it("should get all TODOs", (done) => {
-    request(app)
-      .get("/todos")
-      .expect(200)
-      .expect(res => {
-        expect(res.body.todos.length).toBe(2);
+        expect(res.body.todos.length).toBe(1);
       })
       .end(done);
   });
@@ -144,6 +85,7 @@ describe("GET /todo/:id", () => {
     var todo = todos[1];
     request(app)
       .get(`/todos/${todo._id}`)
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(200)
       .expect(res => {
         expect(res.body.todo.text).toBe(todo.text);
@@ -156,6 +98,7 @@ describe("GET /todo/:id", () => {
     var hexId = new ObjectID().toHexString();
     request(app)
       .get(`/todos/${hexId}`)
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(404)
       .end(done);
   });
@@ -163,6 +106,7 @@ describe("GET /todo/:id", () => {
   it("should return 404 for non-ObjectIDs", (done) => {
     request(app)
       .get("/todos/INVALID_TODO_ID")
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(404)
       .end(done);
   });
@@ -175,6 +119,7 @@ describe("DELETE /todo/:id", () => {
     var todo = todos[1];
     request(app)
       .delete(`/todos/${todo._id}`)
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(200)
       .expect(res => {
         expect(res.body.todo.text).toBe(todo.text);
@@ -195,6 +140,7 @@ describe("DELETE /todo/:id", () => {
     var hexId = new ObjectID().toHexString();
     request(app)
       .delete(`/todos/${hexId}`)
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(404)
       .end(done);
   });
@@ -202,6 +148,7 @@ describe("DELETE /todo/:id", () => {
   it("should return 404 for non-ObjectIDs", (done) => {
     request(app)
       .delete("/todos/INVALID_TODO_ID")
+      .set("X-Auth", users[0].tokens[0].token)
       .expect(404)
       .end(done);
   });
@@ -214,6 +161,7 @@ describe("PATCH /todo/:id", () => {
     var todo = todos[0];
     request(app)
       .patch(`/todos/${todo._id}`)
+      .set("X-Auth", users[0].tokens[0].token)
       .send({
         text: "NEW TEXT",
         completed: true
@@ -241,6 +189,7 @@ describe("PATCH /todo/:id", () => {
     var todo = todos[1];
     request(app)
       .patch(`/todos/${todo._id}`)
+      .set("X-Auth", users[0].tokens[0].token)
       .send({
         completed: false
       })
