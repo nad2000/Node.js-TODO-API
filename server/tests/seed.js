@@ -23,7 +23,7 @@ const users = [{
       token: jwt.sign({
         _id: u._id,
         access: "auth"
-      }, "abc123").toString()
+      }, process.env.JWT_SECRET).toString()
     }];
   return u;
 });

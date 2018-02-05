@@ -72,7 +72,7 @@ UserSchema.statics.findByCredentials = function(email, password) {
 
 UserSchema.statics.findByToken = function(token) {
   try {
-    var decoded = jwt.verify(token, "abc123");
+    var decoded = jwt.verify(token, process.env.JWT_SECRET);
     return User.findOne({
       _id: decoded._id,
       "tokens.token": token,
@@ -88,7 +88,7 @@ UserSchema.methods.generateAuthToken = function() {
   var token = jwt.sign({
     _id: this._id.toHexString(),
     access
-  }, "abc123");
+  }, process.env.JWT_SECRET);
   this.tokens.push({
     access,
     token
