@@ -12,8 +12,12 @@ const users = [{
   _id: new ObjectID(),
   email: "jen@example.com",
   password: "userTwoPass"
+}, {
+  _id: new ObjectID(),
+  email: "test42@test.com",
+  password: "userThreePass"
 }].map(u => {
-  if (u.email == "test123@test.com")
+  if (u.email != "jen@example.com")
     u.tokens = [{
       access: "auth",
       token: jwt.sign({
@@ -39,8 +43,7 @@ const todos = [{
   text: "Second test todo",
   completed: true,
   completedAt: 42,
-  _creator: users[1]._id
-
+  _creator: users[2]._id
 }];
 
 const populateTodos = done => {

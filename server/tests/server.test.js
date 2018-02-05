@@ -82,7 +82,7 @@ describe("GET /todos", () => {
 describe("GET /todo/:id", () => {
 
   it("should return a TODO", (done) => {
-    var todo = todos[1];
+    var todo = todos[0];
     request(app)
       .get(`/todos/${todo._id}`)
       .set("X-Auth", users[0].tokens[0].token)
@@ -91,6 +91,15 @@ describe("GET /todo/:id", () => {
         expect(res.body.todo.text).toBe(todo.text);
         expect(res.body.todo._id).toBe(todo._id.toHexString());
       })
+      .end(done);
+  });
+
+  it("should not return a TODO created by other user", (done) => {
+    var todo = todos[1];
+    request(app)
+      .get(`/todos/${todo._id}`)
+      .set("X-Auth", users[0].tokens[0].token)
+      .expect(404)
       .end(done);
   });
 
@@ -119,7 +128,7 @@ describe("DELETE /todo/:id", () => {
     var todo = todos[1];
     request(app)
       .delete(`/todos/${todo._id}`)
-      .set("X-Auth", users[0].tokens[0].token)
+      .set("X-Auth", users[2].tokens[0].token)
       .expect(200)
       .expect(res => {
         expect(res.body.todo.text).toBe(todo.text);
@@ -131,6 +140,23 @@ describe("DELETE /todo/:id", () => {
         }
         Todo.findById(todo._id).then(todo => {
           expect(todo).toNotExist();
+          done();
+        }).catch(e => done(e));
+      });
+  });
+
+  it("should not remove a TODO created by another user", (done) => {
+    var todo = todos[0];
+    request(app)
+      .delete(`/todos/${todo._id}`)
+      .set("X-Auth", users[2].tokens[0].token)
+      .expect(404)
+      .end((err, res) => {
+        if(err) {
+          return done(err);
+        }
+        Todo.findById(todo._id).then(todo => {
+          expect(todo).toExist();
           done();
         }).catch(e => done(e));
       });
@@ -185,11 +211,34 @@ describe("PATCH /todo/:id", () => {
       });
   });
 
+  it("should not update the TODO created by another user", (done) => {
+    var todo = todos[0];
+    request(app)
+      .patch(`/todos/${todo._id}`)
+      .set("X-Auth", users[2].tokens[0].token)
+      .send({
+        text: "NEW TEXT",
+        completed: true
+      })
+      .expect(404)
+      .end((err, res) => {
+        if(err) {
+          return done(err);
+        }
+        Todo.findById(todo._id).then(todo => {
+          expect(todo.text).toBe("First test todo");
+          expect(todo.completed).toBe(false);
+          expect(todo.completedAt).toNotExist();
+          done();
+        }).catch(e => done(e));
+      });
+  });
+
   it("should clear completedAt when TODO is not completed.", (done) => {
     var todo = todos[1];
     request(app)
       .patch(`/todos/${todo._id}`)
-      .set("X-Auth", users[0].tokens[0].token)
+      .set("X-Auth", users[2].tokens[0].token)
       .send({
         completed: false
       })

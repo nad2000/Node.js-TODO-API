@@ -56,7 +56,7 @@ app.get("/todos/:id", authenticate, (req, res) => {
       error: `Invalid ID ${id}`
     });
   }
-  Todo.findById(id).then(
+  Todo.findOne({_id: id, _creator: req.user.id}).then(
     todo => {
       if (!todo) {
         return res.status(404).send({
@@ -73,14 +73,14 @@ app.get("/todos/:id", authenticate, (req, res) => {
   )
 });
 
-app.delete("/todos/:id", (req, res) => {
+app.delete("/todos/:id", authenticate, (req, res) => {
   var id = req.params.id;
   if (!ObjectID.isValid(id)) {
     return res.status(404).send({
       error: `Invalid ID ${id}`
     });
   }
-  Todo.findByIdAndRemove(id).then(
+  Todo.findOneAndRemove({_id: id, _creator: req.user.id}).then(
     todo => {
       if (!todo) {
         return res.status(404).send({
@@ -97,7 +97,7 @@ app.delete("/todos/:id", (req, res) => {
   )
 });
 
-app.patch("/todos/:id", (req, res) => {
+app.patch("/todos/:id", authenticate, (req, res) => {
   var id = req.params.id;
   if (!ObjectID.isValid(id)) {
     return res.status(404).send({
@@ -111,7 +111,7 @@ app.patch("/todos/:id", (req, res) => {
     body.completed = false;
     body.completedAt = null;
   }
-  Todo.findByIdAndUpdate(id, {
+  Todo.findOneAndUpdate({_id: id, _creator: req.user.id}, {
     $set: body
   }, {
     new: true
